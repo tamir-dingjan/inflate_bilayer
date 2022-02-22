@@ -1,17 +1,34 @@
 """
 A tool to inflate/deflate bilayers in preparation for backmapping, to avoid stereoclashes in the result.
 
+Usage:
+$> python inflate.py input_file output_file scale_factor
+
 """
 
-
+import sys
 import mdtraj as md
 import numpy as np
 
-scale_factor = 4
+
+if len(sys.argv) != 4:
+    # print("ERROR: Incorrect number of arguments given.\nUsage:\n$> python inflate.py input_file output_file scale_factor")
+    raise ValueError("ERROR: Incorrect number of arguments given.\nUsage:\n$> python inflate.py input_file output_file scale_factor")
+
+input_file = sys.argv[1]
+output_file = sys.argv[2]
+
+try:
+    scale_factor = int(sys.argv[3])
+except ValueError:
+    raise ValueError("ERROR: Scale factor must be an integer")
 
 # Load in bilayer
-bilayer = md.load("eq4_lipids.gro")
-
+try:
+    bilayer = md.load(input_file)
+except FileNotFoundError:
+    raise FileNotFoundError("ERROR: Couldn't load file: %s" % input_file)
+    
 # Get COM of system
 system_com = np.mean(bilayer.xyz[0, :, :2], axis=0)
 
@@ -32,6 +49,6 @@ scaled_coords = np.dstack((bilayer.xyz[:,:,:2] + transform_per_atom[np.newaxis, 
 
 bilayer.xyz = scaled_coords
 
-bilayer.save_gro("scaled_%s.gro" % scale_factor)
+bilayer.save_gro(output_file)
 
 
