@@ -21,16 +21,14 @@ res_com = np.asarray([np.mean(coords, axis=0) for coords in [bilayer.xyz[0, [i.i
 # Get inflated position of each residue COM
 # Scale the magnitude of the XY vector from the system COM to the residue COM
 
-scaled_com = np.asarray([scale_factor*(r - system_com) for r in res_com])
+scaled_com = scale_factor * np.asarray([(r - system_com) for r in res_com])
 
-transform = scaled_com - res_com
+transform = scaled_com # - res_com
 
 transform_per_atom = np.concatenate([np.tile(x, (n_atoms,1)) for x, n_atoms in zip(transform, [i.n_atoms for i in bilayer.topology.residues])])
 
 # Translate residue coordinates to new COM
 # Add to atomic positions the difference in res COM
-
-scaled_atoms = bilayer.xyz[:,:,:2] + transform_per_atom[np.newaxis, ...]
 
 scaled_coords = np.dstack((bilayer.xyz[:,:,:2] + transform_per_atom[np.newaxis, ...], bilayer.xyz[0,:,2]))
 
