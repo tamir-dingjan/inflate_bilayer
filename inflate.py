@@ -19,9 +19,9 @@ input_file = sys.argv[1]
 output_file = sys.argv[2]
 
 try:
-    scale_factor = int(sys.argv[3])
+    scale_factor = float(sys.argv[3])
 except ValueError:
-    raise ValueError("ERROR: Scale factor must be an integer")
+    raise ValueError("ERROR: Scale factor must be a number")
 
 # Load in bilayer
 try:
